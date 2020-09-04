@@ -1,0 +1,67 @@
+<style>
+    .keys {
+        font-family: 'Lato', sans-serif;
+        text-align: center;
+        width: 500px;
+        height: 200px;
+        margin: auto;
+    }
+    
+    .arr {
+        cursor: pointer;
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        line-height: 100px;
+        background: green;
+        color: white;
+        font-size: 50px;
+        border-right: 10px solid darken(grey, 20);
+        border-bottom: 10px solid darken(grey, 20);
+        border-left: 10px solid darken(grey, 15);
+        border-top: 10px solid darken(grey, 10);
+        display: inline-block;
+        margin: 5px;
+        transition: all .05s linear;
+    }
+    
+    .up {
+        position: relative;
+        top: -4px;
+    }
+    
+    .pressed {
+        border-bottom: 8px solid darken(grey, 20);
+        text-shadow: 0 0 10px white;
+        transform: translate(0, 2px);
+    }
+    
+    .up {
+        position: relative;
+        top: -4px;
+    }
+    
+    .pressed {
+        border-bottom: 8px solid darken(grey, 20);
+        text-shadow: 0 0 10px white;
+        transform: translate(0, 2px);
+    }
+</style>
+
+<div class="keys">
+    <div class="up arr" onClick="foo(this.id)" id="up"><span class="glyphicon glyphicon-chevron-up" style="position:relative;top:22px"></span></div>
+    <br>
+    <div class="left arr" onclick="foo(this.id)" id="left"><span class="glyphicon glyphicon-chevron-left" style="position:relative;top:22px"></span></div>
+    <div class="down arr" onclick="foo(this.id)" id="down"><span class="glyphicon glyphicon-chevron-down" style="position:relative;top:28px"></span></div>
+    <div class="right arr" onclick="foo(this.id)" id="right"><span class="glyphicon glyphicon-chevron-right" style="position:relative;top:22px"></span></div>
+</div>
+
+<script>
+    console.log("loaded");
+    var msg = io.connect('/msg');
+
+    function foo(id) {
+        console.log(id);
+        msg.emit("message", id);
+    }
+</script>

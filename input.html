@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title>
+        input
+    </title>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body style="background-color:black;">
+
+    <!-- System script -->
+    <script>
+        var sys = io.connect('/sys');
+
+        function loadController() {
+            sys.emit("SYS_getCurrentAppName");
+
+            console.log("get app name req sent");
+            sys.on("SYS_appName", function(app_name) {
+                console.log(app_name);
+                var xhttp = new XMLHttpRequest();
+
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        console.log("Controller loaded");
+                        $("#control_screen").html(this.responseText);
+                    }
+                };
+
+                console.log("Xhttp req send");
+                xhttp.open("GET", "./" + app_name + "/" + "controller" + ".html", true);
+                xhttp.send();
+            });
+        }
+
+        function join_room() {
+            console.log("join room");
+            sys.emit('room_connect', document.getElementById("code").value);
+            sys.on('room_connect_status', function(status) {
+                if (status == 0) {
+                    // successfully joined the room
+                    // load the corresponding of controller on div with id = control_screen
+                    console.log("Connected successfully");
+                    loadController();
+                } else {
+                    // handle the error
+                    console.log("Unsuccessful connection");
+                }
+            });
+        }
+    </script>
+
+    <!-- App communication script -->
+    <script>
+        var msg = io.connect('/msg');
+    </script>
+
+    <div id="control_screen">
+
+        <div>
+            <label for="code"> Enter the code from output below</label>
+            <input type="text" class="form-control" id="code">
+        </div>
+        <div>
+            <button type="button" class="btn btn-success" onClick="join_room()">GO</button>
+        </div>
+
+    </div>
+</body>
+
+</html>

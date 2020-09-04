@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <title>
+        output
+    </title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body style="background-color:black;">
+
+    <!-- Nav bar -->
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Conn</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a data-toggle="modal" href="#connect_new_input">Connect new player</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Connection script, should not be changed -->
+    <script>
+        var sys = io.connect('/sys');
+        var room_no;
+        // begin with home as default
+        var currentAppName = "home";
+        // Fire room create request
+        sys.emit('room_create');
+        // Catch incoming room status for room number
+        sys.on('room_connect_status', function(room) {
+            room_no = room;
+        });
+    </script>
+
+    <!-- System script -->
+    <script>
+        // Get current app name
+        sys.emit("SYS_getCurrentAppName");
+        sys.on("SYS_appName", function(app_name) {
+            console.log(app_name);
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("Screen loaded");
+                    $("#output_screen").html(this.responseText);
+                }
+            };
+
+            console.log("Xhttp req send");
+            xhttp.open("GET", "./" + app_name + "/" + "display" + ".html", true);
+            xhttp.send();
+        });
+    </script>
+
+    <div id="output_screen">
+        <!-- output screen -->
+    </div>
+
+    <!-- Modal for new input -->
+    <div class="modal fade" id="connect_new_input" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add input</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Enter the below code in input device.</p>
+                    <input type="text" id="room_no_field" readonly>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#connect_new_input').on('show.bs.modal', function() {
+            document.getElementById("room_no_field").value = room_no;
+        });
+    </script>
+</body>
+
+</html>
